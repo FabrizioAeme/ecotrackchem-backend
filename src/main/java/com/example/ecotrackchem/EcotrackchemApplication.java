@@ -22,12 +22,7 @@ public class EcotrackchemApplication {
 		SpringApplication.run(EcotrackchemApplication.class, args);
 	}
 
-	/**
-	 * Datos de arranque solo para pruebas manuales con Postman/Insomnia:
-	 * crea un usuario administrador y un insumo quimico de ejemplo si la
-	 * base de datos esta vacia. Puedes borrar este bean cuando ya no lo
-	 * necesites.
-	 */
+	
 	@Bean
 	CommandLineRunner commandLineRunner(
 			UsuarioRepository usuarioRepository,
