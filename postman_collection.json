@@ -1,0 +1,199 @@
+{
+  "info": {
+    "name": "EcoTrack Chem - Backend T1",
+    "description": "Coleccion de pruebas para el backend de EcoTrack Chem: autenticacion JWT y CRUD de Usuarios, Insumos Quimicos, Lotes y Residuos Industriales.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "access_token", "value": "" },
+    { "key": "insumo_id", "value": "1" },
+    { "key": "lote_id", "value": "1" },
+    { "key": "residuo_id", "value": "1" },
+    { "key": "usuario_id", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": { "type": "noauth" },
+            "url": "{{base_url}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Ana\",\n  \"apellidos\": \"Torres\",\n  \"correo\": \"ana.torres@ecotrackchem.com\",\n  \"clave\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (obtener JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) { pm.collectionVariables.set('access_token', data.access_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": { "type": "noauth" },
+            "url": "{{base_url}}/auth/authenticate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@ecotrackchem.com\",\n  \"clave\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        { "name": "Listar usuarios", "request": { "method": "GET", "url": "{{base_url}}/api/v1/usuarios" } },
+        { "name": "Ver usuario por id", "request": { "method": "GET", "url": "{{base_url}}/api/v1/usuarios/{{usuario_id}}" } }
+      ]
+    },
+    {
+      "name": "Insumos Quimicos",
+      "item": [
+        { "name": "Listar insumos", "request": { "method": "GET", "url": "{{base_url}}/api/v1/insumos" } },
+        { "name": "Ver insumo por id", "request": { "method": "GET", "url": "{{base_url}}/api/v1/insumos/{{insumo_id}}" } },
+        {
+          "name": "Crear insumo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.id) { pm.collectionVariables.set('insumo_id', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/insumos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigoCas\": \"64-17-5\",\n  \"nombre\": \"Etanol\",\n  \"nivelPureza\": 96.50,\n  \"nivelPeligrosidad\": \"INFLAMABLE\",\n  \"stockDisponible\": 120.00\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar insumo",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/insumos/{{insumo_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigoCas\": \"64-17-5\",\n  \"nombre\": \"Etanol grado industrial\",\n  \"nivelPureza\": 97.00,\n  \"nivelPeligrosidad\": \"INFLAMABLE\",\n  \"stockDisponible\": 100.00\n}"
+            }
+          }
+        },
+        { "name": "Eliminar insumo", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/insumos/{{insumo_id}}" } }
+      ]
+    },
+    {
+      "name": "Lotes",
+      "item": [
+        { "name": "Listar lotes", "request": { "method": "GET", "url": "{{base_url}}/api/v1/lotes" } },
+        { "name": "Ver lote por id", "request": { "method": "GET", "url": "{{base_url}}/api/v1/lotes/{{lote_id}}" } },
+        {
+          "name": "Crear lote",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.id) { pm.collectionVariables.set('lote_id', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/lotes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigoLote\": \"L-2026-001\",\n  \"fechaFabricacion\": \"2026-09-20\",\n  \"volumenProducido\": 250.00,\n  \"estado\": \"EN_PROCESO\",\n  \"usuarioId\": {{usuario_id}},\n  \"insumoId\": {{insumo_id}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar lote",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/lotes/{{lote_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigoLote\": \"L-2026-001\",\n  \"fechaFabricacion\": \"2026-09-20\",\n  \"volumenProducido\": 260.00,\n  \"estado\": \"FINALIZADO\",\n  \"usuarioId\": {{usuario_id}},\n  \"insumoId\": {{insumo_id}}\n}"
+            }
+          }
+        },
+        { "name": "Eliminar lote", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/lotes/{{lote_id}}" } }
+      ]
+    },
+    {
+      "name": "Residuos Industriales",
+      "item": [
+        { "name": "Listar residuos", "request": { "method": "GET", "url": "{{base_url}}/api/v1/residuos" } },
+        { "name": "Ver residuo por id", "request": { "method": "GET", "url": "{{base_url}}/api/v1/residuos/{{residuo_id}}" } },
+        {
+          "name": "Crear residuo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.id) { pm.collectionVariables.set('residuo_id', data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/residuos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoResiduo\": \"Solvente contaminado\",\n  \"volumenLitros\": 15.50,\n  \"disposicionFinal\": \"RECOGIDA_ESPECIAL\",\n  \"requiereCertificado\": true,\n  \"loteId\": {{lote_id}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar residuo",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/residuos/{{residuo_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoResiduo\": \"Solvente contaminado\",\n  \"volumenLitros\": 12.00,\n  \"disposicionFinal\": \"NEUTRALIZADO\",\n  \"requiereCertificado\": false,\n  \"loteId\": {{lote_id}}\n}"
+            }
+          }
+        },
+        { "name": "Eliminar residuo", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/residuos/{{residuo_id}}" } }
+      ]
+    }
+  ]
+}
