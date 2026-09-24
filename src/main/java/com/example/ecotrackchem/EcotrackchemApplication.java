@@ -21,8 +21,7 @@ public class EcotrackchemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EcotrackchemApplication.class, args);
 	}
-
-	
+	//Datos de prueba para la base de datos que se ejecutan al iniciar la aplicación 
 	@Bean
 	CommandLineRunner commandLineRunner(
 			UsuarioRepository usuarioRepository,
